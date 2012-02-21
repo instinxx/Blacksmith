@@ -1,7 +1,10 @@
 package net.apunch.blacksmith;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -21,6 +24,7 @@ import net.citizensnpcs.api.util.DataKey;
 public class BlacksmithCharacter extends Character {
     private final Blacksmith plugin;
     private final List<Material> reforgeableItems = new ArrayList<Material>();
+    private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
     private RepairSession session;
 
     // Defaults
@@ -32,8 +36,10 @@ public class BlacksmithCharacter extends Character {
     private String successMsg = Setting.SUCCESS_MESSAGE.asString();
     private String failMsg = Setting.FAIL_MESSAGE.asString();
     private String insufficientFundsMsg = Setting.INSUFFICIENT_FUNDS_MESSAGE.asString();
+    private String cooldownUnexpiredMsg = Setting.COOLDOWN_UNEXPIRED_MESSAGE.asString();
     private int minReforgeDelay = Setting.MIN_REFORGE_DELAY.asInt();
     private int maxReforgeDelay = Setting.MAX_REFORGE_DELAY.asInt();
+    private int reforgeCooldown = Setting.REFORGE_COOLDOWN.asInt();
     private int failChance = Setting.FAIL_CHANCE.asInt();
 
     public BlacksmithCharacter() {
@@ -63,17 +69,31 @@ public class BlacksmithCharacter extends Character {
             failMsg = key.getString("messages.fail-reforge");
         if (key.keyExists("messages.insufficient-funds"))
             insufficientFundsMsg = key.getString("messages.insufficient-funds");
+        if (key.keyExists("messages.cooldown-not-expired"))
+            cooldownUnexpiredMsg = key.getString("messages.cooldown-not-expired");
         if (key.keyExists("delays-in-seconds.minimum"))
             minReforgeDelay = key.getInt("delays-in-seconds.minimum");
         if (key.keyExists("delays-in-seconds.maximum"))
             maxReforgeDelay = key.getInt("delays-in-seconds.maximum");
+        if (key.keyExists("delays-in-seconds.reforge-cooldown"))
+            reforgeCooldown = key.getInt("delays-in-seconds.reforge-cooldown");
         if (key.keyExists("percent-chance-to-fail-reforge"))
             failChance = key.getInt("percent-chance-to-fail-reforge");
     }
 
     @Override
     public void onRightClick(NPC npc, Player player) {
-        // TODO cooldowns
+        if (!player.hasPermission("blacksmith.reforge"))
+            return;
+
+        if (cooldowns.get(player.getName()) != null) {
+            if (!Calendar.getInstance().after(cooldowns.get(player.getName()))) {
+                npc.chat(player, cooldownUnexpiredMsg);
+                return;
+            }
+            cooldowns.remove(player.getName());
+        }
+
         ItemStack hand = player.getItemInHand();
         if (session != null) {
             if (!session.isInSession(player)) {
@@ -115,8 +135,10 @@ public class BlacksmithCharacter extends Character {
         key.setString("messages.successful-reforge", successMsg);
         key.setString("messages.fail-reforge", failMsg);
         key.setString("messages.insufficient-funds", insufficientFundsMsg);
+        key.setString("messages.cooldown-not-expired", cooldownUnexpiredMsg);
         key.setInt("delays-in-seconds.minimum", minReforgeDelay);
         key.setInt("delays-in-seconds.maximum", maxReforgeDelay);
+        key.setInt("delays-in-seconds.reforge-cooldown", reforgeCooldown);
         key.setInt("percent-chance-to-fail-reforge", failChance);
     }
 
@@ -151,6 +173,10 @@ public class BlacksmithCharacter extends Character {
                 ((Player) npc.getBukkitEntity()).setItemInHand(null);
             player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), reforge);
             session = null;
+            // Start cooldown
+            Calendar wait = Calendar.getInstance();
+            wait.add(Calendar.SECOND, reforgeCooldown);
+            cooldowns.put(player.getName(), wait);
         }
 
         private boolean reforgeItemInHand() {
@@ -177,7 +203,7 @@ public class BlacksmithCharacter extends Character {
                 reforge.setDurability(durability);
                 return false;
             }
-            int chance = 50;
+            int chance = 25;
             if (reforge.getDurability() == 0)
                 chance *= 2;
             else
