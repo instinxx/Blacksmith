@@ -128,6 +128,8 @@ public class BlacksmithCharacter extends Character {
         npc.chat(player, startReforgeMsg);
         session.setTask(plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin,
                 new ReforgeTask(npc, player), (new Random().nextInt(maxReforgeDelay) + minReforgeDelay) * 20));
+        if (npc.getBukkitEntity() instanceof Player)
+            ((Player) npc.getBukkitEntity()).setItemInHand(player.getItemInHand());
         player.setItemInHand(null);
     }
 
@@ -145,6 +147,8 @@ public class BlacksmithCharacter extends Character {
         @Override
         public void run() {
             npc.chat(player, reforgeItemInHand() ? successMsg : failMsg);
+            if (npc.getBukkitEntity() instanceof Player)
+                ((Player) npc.getBukkitEntity()).setItemInHand(null);
             player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), reforge);
             session = null;
         }
@@ -165,13 +169,11 @@ public class BlacksmithCharacter extends Character {
                 }
                 // Damage the item
                 short durability = (short) (reforge.getDurability() + reforge.getDurability() * random.nextInt(5));
-                System.out.println("durability: " + durability);
                 short maxDurability = reforge.getType().getMaxDurability();
                 if (durability <= 0)
                     durability = (short) (maxDurability / 3);
                 else if (reforge.getDurability() + durability > maxDurability)
                     durability = (short) (maxDurability - random.nextInt(maxDurability - 25));
-                System.out.println("durabilityModified: " + durability);
                 reforge.setDurability((short) (durability));
                 return false;
             }
