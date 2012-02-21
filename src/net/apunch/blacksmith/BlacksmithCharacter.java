@@ -174,7 +174,7 @@ public class BlacksmithCharacter extends Character {
                     durability = (short) (maxDurability / 3);
                 else if (reforge.getDurability() + durability > maxDurability)
                     durability = (short) (maxDurability - random.nextInt(maxDurability - 25));
-                reforge.setDurability((short) (durability));
+                reforge.setDurability(durability);
                 return false;
             }
             int chance = 50;
