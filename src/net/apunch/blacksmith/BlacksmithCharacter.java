@@ -164,11 +164,15 @@ public class BlacksmithCharacter extends Character {
                     }
                 }
                 // Damage the item
-                if (random.nextInt(3) == 0) {
-                    reforge.setDurability(reforge.getDurability() + reforge.getDurability() * random.nextInt(3) < reforge
-                            .getType().getMaxDurability() ? (short) (reforge.getDurability() + reforge.getDurability()
-                            * random.nextInt(3)) : (short) (reforge.getType().getMaxDurability() - 10));
-                }
+                short durability = (short) (reforge.getDurability() + reforge.getDurability() * random.nextInt(5));
+                System.out.println("durability: " + durability);
+                short maxDurability = reforge.getType().getMaxDurability();
+                if (durability <= 0)
+                    durability = (short) (maxDurability / 3);
+                else if (reforge.getDurability() + durability > maxDurability)
+                    durability = (short) (maxDurability - random.nextInt(maxDurability - 25));
+                System.out.println("durabilityModified: " + durability);
+                reforge.setDurability((short) (durability));
                 return false;
             }
             int chance = 50;
