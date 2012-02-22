@@ -41,6 +41,7 @@ public class BlacksmithCharacter extends Character {
     private int maxReforgeDelay = Setting.MAX_REFORGE_DELAY.asInt();
     private int reforgeCooldown = Setting.REFORGE_COOLDOWN.asInt();
     private int failChance = Setting.FAIL_CHANCE.asInt();
+    private boolean dropItem = Setting.DROP_ITEM.asBoolean();
 
     public BlacksmithCharacter() {
         plugin = (Blacksmith) Bukkit.getServer().getPluginManager().getPlugin("Blacksmith");
@@ -79,6 +80,8 @@ public class BlacksmithCharacter extends Character {
             reforgeCooldown = key.getInt("delays-in-seconds.reforge-cooldown");
         if (key.keyExists("percent-chance-to-fail-reforge"))
             failChance = key.getInt("percent-chance-to-fail-reforge");
+        if (key.keyExists("drop-item"))
+            dropItem = key.getBoolean("drop-item");
     }
 
     @Override
@@ -140,6 +143,7 @@ public class BlacksmithCharacter extends Character {
         key.setInt("delays-in-seconds.maximum", maxReforgeDelay);
         key.setInt("delays-in-seconds.reforge-cooldown", reforgeCooldown);
         key.setInt("percent-chance-to-fail-reforge", failChance);
+        key.setBoolean("drop-item", dropItem);
     }
 
     public String getInsufficientFundsMessage() {
@@ -171,7 +175,12 @@ public class BlacksmithCharacter extends Character {
             npc.chat(player, reforgeItemInHand() ? successMsg : failMsg);
             if (npc.getBukkitEntity() instanceof Player)
                 ((Player) npc.getBukkitEntity()).setItemInHand(null);
-            player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), reforge);
+            if (dropItem)
+                player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), reforge);
+            else {
+                for (ItemStack stack : player.getInventory().addItem(reforge).values())
+                    player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), stack);
+            }
             session = null;
             // Start cooldown
             Calendar wait = Calendar.getInstance();
@@ -194,7 +203,7 @@ public class BlacksmithCharacter extends Character {
                     }
                 }
                 // Damage the item
-                short durability = (short) (reforge.getDurability() + reforge.getDurability() * random.nextInt(5));
+                short durability = (short) (reforge.getDurability() + reforge.getDurability() * random.nextInt(8));
                 short maxDurability = reforge.getType().getMaxDurability();
                 if (durability <= 0)
                     durability = (short) (maxDurability / 3);
@@ -203,9 +212,9 @@ public class BlacksmithCharacter extends Character {
                 reforge.setDurability(durability);
                 return false;
             }
-            int chance = 25;
+            int chance = 10;
             if (reforge.getDurability() == 0)
-                chance *= 2;
+                chance *= 4;
             else
                 reforge.setDurability((short) 0);
             // Add random enchantments

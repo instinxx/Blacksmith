@@ -39,6 +39,7 @@ public class Settings {
         BUSY_WITH_REFORGE_MESSAGE("defaults.messages.busy-with-reforge", "<c>I'm working on it. Be patient!"),
         COOLDOWN_UNEXPIRED_MESSAGE("defaults.messages.cooldown-not-expired", "<c>You've already had your chance! Give me a break!"),
         COST_MESSAGE("defaults.messages.cost", "<e>It will cost <a><price> <e>to reforge that <a><item><e>! Click again to reforge!"),
+        DROP_ITEM("defaults.drop-item", true),
         ENCHANTMENT_MODIFIER("enchantment-modifiers.default", 5),
         FAIL_CHANCE("defaults.percent-chance-to-fail-reforge", 10),
         FAIL_MESSAGE("defaults.messages.fail-reforge", "<c>Whoops! Didn't mean to do that! Maybe next time?"),
