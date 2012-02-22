@@ -7,13 +7,17 @@ import net.apunch.blacksmith.util.Settings.Setting;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.util.DataKey;
+import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Blacksmith extends JavaPlugin {
     private Settings config;
+    private Economy economy;
 
     @Override
     public void onDisable() {
@@ -26,6 +30,12 @@ public class Blacksmith extends JavaPlugin {
     public void onEnable() {
         config = new Settings(this);
         config.load();
+
+        // Setup Vault
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
+                Economy.class);
+        if (economyProvider != null)
+            economy = economyProvider.getProvider();
 
         CitizensAPI.getCharacterManager().register(BlacksmithCharacter.class);
 
@@ -97,7 +107,19 @@ public class Blacksmith extends JavaPlugin {
         }
     }
 
-    public double getCost(ItemStack item) {
+    public boolean doesPlayerHaveEnough(Player player) {
+        return economy.getBalance(player.getName()) - getCost(player.getItemInHand()) >= 0;
+    }
+
+    public String formatCost(Player player) {
+        return economy.format(getCost(player.getItemInHand()));
+    }
+
+    public void withdraw(Player player) {
+        economy.withdrawPlayer(player.getName(), getCost(player.getItemInHand()));
+    }
+
+    private double getCost(ItemStack item) {
         DataKey root = config.getConfig().getKey("");
         double price = Setting.BASE_PRICE.asDouble();
         if (root.keyExists("base-prices." + item.getType().name().toLowerCase().replace('_', '-')))

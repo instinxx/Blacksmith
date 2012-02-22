@@ -119,7 +119,7 @@ public class BlacksmithCharacter extends Character {
                 return;
             }
             session = new RepairSession(player, npc);
-            npc.chat(player, costMsg.replace("<price>", String.valueOf(plugin.getCost(hand))).replace("<item>",
+            npc.chat(player, costMsg.replace("<price>", plugin.formatCost(player)).replace("<item>",
                     hand.getType().name().toLowerCase().replace('_', ' ')));
         }
     }
@@ -152,6 +152,7 @@ public class BlacksmithCharacter extends Character {
 
     private void reforge(NPC npc, Player player) {
         npc.chat(player, startReforgeMsg);
+        plugin.withdraw(player);
         session.setTask(plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin,
                 new ReforgeTask(npc, player), (new Random().nextInt(maxReforgeDelay) + minReforgeDelay) * 20));
         if (npc.getBukkitEntity() instanceof Player)

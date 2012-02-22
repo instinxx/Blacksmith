@@ -27,7 +27,7 @@ public class RepairSession {
             npc.chat(player, "<c>That's not the item you wanted to reforge before!");
             return true;
         }
-        if (plugin.getCost(player.getItemInHand()) < 0 /* TODO hasEnough */) {
+        if (!plugin.doesPlayerHaveEnough(player)) {
             npc.chat(player, ((BlacksmithCharacter) npc.getCharacter()).getInsufficientFundsMessage());
             return true;
         }
