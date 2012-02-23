@@ -25,7 +25,7 @@ public class BlacksmithCharacter extends Character {
     private final Blacksmith plugin;
     private final List<Material> reforgeableItems = new ArrayList<Material>();
     private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
-    private RepairSession session;
+    private ReforgeSession session;
 
     // Defaults
     private String busyWithPlayerMsg = Setting.BUSY_WITH_PLAYER_MESSAGE.asString();
@@ -118,7 +118,7 @@ public class BlacksmithCharacter extends Character {
                 npc.chat(player, invalidItemMsg);
                 return;
             }
-            session = new RepairSession(player, npc);
+            session = new ReforgeSession(player, npc);
             npc.chat(player, costMsg.replace("<price>", plugin.formatCost(player)).replace("<item>",
                     hand.getType().name().toLowerCase().replace('_', ' ')));
         }

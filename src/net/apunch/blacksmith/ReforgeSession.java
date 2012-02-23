@@ -5,14 +5,14 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class RepairSession {
+public class ReforgeSession {
     private final Blacksmith plugin;
     private final Player player;
     private final ItemStack reforge;
     private final NPC npc;
     private int taskId;
 
-    public RepairSession(Player player, NPC npc) {
+    public ReforgeSession(Player player, NPC npc) {
         this.player = player;
         reforge = player.getItemInHand();
         this.npc = npc;
