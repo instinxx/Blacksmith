@@ -45,6 +45,7 @@ public class Settings {
         FAIL_MESSAGE("defaults.messages.fail-reforge", "<c>Whoops! Didn't mean to do that! Maybe next time?"),
         INSUFFICIENT_FUNDS_MESSAGE("defaults.messages.insufficient-funds", "<c>You don't have enough money to reforge that item!"),
         INVALID_ITEM_MESSAGE("defaults.messages.invalid-item", "<c>I'm sorry, but I don't know how to reforge that!"),
+        MAX_ENCHANTMENTS("defaults.maximum-enchantments", 3),
         MAX_REFORGE_DELAY("defaults.delays-in-seconds.maximum", 30),
         MIN_REFORGE_DELAY("defaults.delays-in-seconds.minimum", 5),
         REFORGE_COOLDOWN("defaults.delays-in-seconds.reforge-cooldown", 60),

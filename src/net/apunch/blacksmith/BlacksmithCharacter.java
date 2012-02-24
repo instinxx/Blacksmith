@@ -22,6 +22,8 @@ import net.citizensnpcs.api.util.DataKey;
 
 @SaveId("blacksmith")
 public class BlacksmithCharacter extends Character {
+    private static final int[] enchantments = new int[Enchantment.values().length];
+
     private final Blacksmith plugin;
     private final List<Material> reforgeableItems = new ArrayList<Material>();
     private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
@@ -41,10 +43,14 @@ public class BlacksmithCharacter extends Character {
     private int maxReforgeDelay = Setting.MAX_REFORGE_DELAY.asInt();
     private int reforgeCooldown = Setting.REFORGE_COOLDOWN.asInt();
     private int failChance = Setting.FAIL_CHANCE.asInt();
+    private int maxEnchantments = Setting.MAX_ENCHANTMENTS.asInt();
     private boolean dropItem = Setting.DROP_ITEM.asBoolean();
 
     public BlacksmithCharacter() {
         plugin = (Blacksmith) Bukkit.getServer().getPluginManager().getPlugin("Blacksmith");
+        int i = 0;
+        for (Enchantment enchantment : Enchantment.values())
+            enchantments[i++] = enchantment.getId();
     }
 
     @Override
@@ -80,6 +86,8 @@ public class BlacksmithCharacter extends Character {
             reforgeCooldown = key.getInt("delays-in-seconds.reforge-cooldown");
         if (key.keyExists("percent-chance-to-fail-reforge"))
             failChance = key.getInt("percent-chance-to-fail-reforge");
+        if (key.keyExists("maximum-enchantments"))
+            maxEnchantments = key.getInt("maximum-enchantments");
         if (key.keyExists("drop-item"))
             dropItem = key.getBoolean("drop-item");
     }
@@ -143,6 +151,7 @@ public class BlacksmithCharacter extends Character {
         key.setInt("delays-in-seconds.maximum", maxReforgeDelay);
         key.setInt("delays-in-seconds.reforge-cooldown", reforgeCooldown);
         key.setInt("percent-chance-to-fail-reforge", failChance);
+        key.setInt("maximum-enchantments", maxEnchantments);
         key.setBoolean("drop-item", dropItem);
     }
 
@@ -213,17 +222,18 @@ public class BlacksmithCharacter extends Character {
                 reforge.setDurability(durability);
                 return false;
             }
+            // Add random enchantments
             int chance = 10;
             if (reforge.getDurability() == 0)
                 chance *= 4;
             else
                 reforge.setDurability((short) 0);
-            // Add random enchantments
             for (int i = 0; i < chance; i++) {
-                int id = random.nextInt(100);
-                Enchantment enchantment = Enchantment.getById(id);
-                if (enchantment != null && enchantment.canEnchantItem(reforge))
-                    reforge.addEnchantment(Enchantment.getById(id), random.nextInt(enchantment.getMaxLevel()) + 1);
+                if (reforge.getEnchantments().keySet().size() == maxEnchantments)
+                    break;
+                Enchantment enchantment = Enchantment.getById(enchantments[random.nextInt(enchantments.length)]);
+                if (enchantment.canEnchantItem(reforge))
+                    reforge.addEnchantment(enchantment, random.nextInt(enchantment.getMaxLevel()) + 1);
             }
             return true;
         }
