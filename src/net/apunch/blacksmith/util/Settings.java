@@ -2,7 +2,7 @@ package net.apunch.blacksmith.util;
 
 import java.io.File;
 
-import net.apunch.blacksmith.Blacksmith;
+import net.apunch.blacksmith.BlacksmithPlugin;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.YamlStorage;
@@ -10,7 +10,7 @@ import net.citizensnpcs.api.util.YamlStorage;
 public class Settings {
     private final YamlStorage config;
 
-    public Settings(Blacksmith plugin) {
+    public Settings(BlacksmithPlugin plugin) {
         config = new YamlStorage(plugin.getDataFolder() + File.separator + "config.yml", "Blacksmith Configuration");
     }
 

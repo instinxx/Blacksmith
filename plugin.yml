@@ -1,5 +1,5 @@
 name: Blacksmith
 author: aPunch
 version: 1.0
-main: net.apunch.blacksmith.Blacksmith
+main: net.apunch.blacksmith.BlacksmithPlugin
 depend: [Citizens, Vault]

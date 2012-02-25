@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ReforgeSession {
-    private final Blacksmith plugin;
+    private final BlacksmithPlugin plugin;
     private final Player player;
     private final ItemStack reforge;
     private final NPC npc;
@@ -17,7 +17,7 @@ public class ReforgeSession {
         reforge = player.getItemInHand();
         this.npc = npc;
 
-        plugin = (Blacksmith) player.getServer().getPluginManager().getPlugin("Blacksmith");
+        plugin = (BlacksmithPlugin) player.getServer().getPluginManager().getPlugin("Blacksmith");
     }
 
     // Return is the session should end
@@ -28,7 +28,7 @@ public class ReforgeSession {
             return true;
         }
         if (!plugin.doesPlayerHaveEnough(player)) {
-            npc.chat(player, ((BlacksmithCharacter) npc.getCharacter()).getInsufficientFundsMessage());
+            npc.chat(player, ((Blacksmith) npc.getCharacter()).getInsufficientFundsMessage());
             return true;
         }
         return false;
