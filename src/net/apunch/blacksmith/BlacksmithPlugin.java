@@ -6,6 +6,7 @@ import net.apunch.blacksmith.util.Settings;
 import net.apunch.blacksmith.util.Settings.Setting;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.character.CharacterFactory;
 import net.citizensnpcs.api.util.DataKey;
 import net.milkbowl.vault.economy.Economy;
 
@@ -37,7 +38,8 @@ public class BlacksmithPlugin extends JavaPlugin {
         if (economyProvider != null)
             economy = economyProvider.getProvider();
 
-        CitizensAPI.getCharacterManager().register(Blacksmith.class);
+        CitizensAPI.getCharacterManager().registerCharacter(
+                new CharacterFactory(Blacksmith.class).withName("blacksmith"));
 
         getLogger().log(Level.INFO, " v" + getDescription().getVersion() + " enabled.");
     }
