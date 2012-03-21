@@ -183,7 +183,6 @@ public class Blacksmith extends Character {
             reforge = player.getItemInHand();
         }
 
-        @Override
         public void run() {
             npc.chat(player, reforgeItemInHand() ? successMsg : failMsg);
             if (npc.getBukkitEntity() instanceof Player)

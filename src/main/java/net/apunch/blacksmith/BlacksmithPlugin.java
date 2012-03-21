@@ -13,6 +13,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -37,6 +38,17 @@ public class BlacksmithPlugin extends JavaPlugin {
                 Economy.class);
         if (economyProvider != null)
             economy = economyProvider.getProvider();
+        else {
+            // Disable if no economy plugin was found
+            final Plugin plugin = this;
+            getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+                public void run() {
+                    getServer().getLogger().log(Level.SEVERE, "Failed to load an economy plugin. Disabling...");
+                    getServer().getPluginManager().disablePlugin(plugin);
+                }
+            });
+        }
 
         CitizensAPI.getCharacterManager().registerCharacter(
                 new CharacterFactory(Blacksmith.class).withName("blacksmith"));
