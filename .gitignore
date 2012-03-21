@@ -1,7 +1,4 @@
 /bin
-/build
 /target
 .classpath
 .project
-Blacksmith.jar
-build.xml

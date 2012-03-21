@@ -125,8 +125,10 @@ public class Blacksmith extends Character {
                 return;
             }
             session = new ReforgeSession(player, npc);
-            npc.chat(player, costMsg.replace("<price>", plugin.formatCost(player)).replace("<item>",
-                    hand.getType().name().toLowerCase().replace('_', ' ')));
+            npc.chat(
+                    player,
+                    costMsg.replace("<price>", plugin.formatCost(player)).replace("<item>",
+                            hand.getType().name().toLowerCase().replace('_', ' ')));
         }
     }
 
@@ -160,8 +162,11 @@ public class Blacksmith extends Character {
     private void reforge(NPC npc, Player player) {
         npc.chat(player, startReforgeMsg);
         plugin.withdraw(player);
-        session.setTask(plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin,
-                new ReforgeTask(npc, player), (new Random().nextInt(maxReforgeDelay) + minReforgeDelay) * 20));
+        session.setTask(plugin
+                .getServer()
+                .getScheduler()
+                .scheduleAsyncDelayedTask(plugin, new ReforgeTask(npc, player),
+                        (new Random().nextInt(maxReforgeDelay) + minReforgeDelay) * 20));
         if (npc.getBukkitEntity() instanceof Player)
             ((Player) npc.getBukkitEntity()).setItemInHand(player.getItemInHand());
         player.setItemInHand(null);
