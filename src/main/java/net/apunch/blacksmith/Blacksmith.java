@@ -37,6 +37,7 @@ public class Blacksmith extends Character {
     private String failMsg = Setting.FAIL_MESSAGE.asString();
     private String insufficientFundsMsg = Setting.INSUFFICIENT_FUNDS_MESSAGE.asString();
     private String cooldownUnexpiredMsg = Setting.COOLDOWN_UNEXPIRED_MESSAGE.asString();
+    private String itemChangedMsg = Setting.ITEM_UNEXPECTEDLY_CHANGED_MESSAGE.asString();
     private int minReforgeDelay = Setting.MIN_REFORGE_DELAY.asInt();
     private int maxReforgeDelay = Setting.MAX_REFORGE_DELAY.asInt();
     private int reforgeCooldown = Setting.REFORGE_COOLDOWN.asInt();
@@ -76,6 +77,8 @@ public class Blacksmith extends Character {
             insufficientFundsMsg = key.getString("messages.insufficient-funds");
         if (key.keyExists("messages.cooldown-not-expired"))
             cooldownUnexpiredMsg = key.getString("messages.cooldown-not-expired");
+        if (key.keyExists("messages.item-changed-during-reforge"))
+            itemChangedMsg = key.getString("messages.item-changed-during-reforge");
         if (key.keyExists("delays-in-seconds.minimum"))
             minReforgeDelay = key.getInt("delays-in-seconds.minimum");
         if (key.keyExists("delays-in-seconds.maximum"))
@@ -106,7 +109,7 @@ public class Blacksmith extends Character {
         ItemStack hand = player.getItemInHand();
         if (session != null) {
             if (!session.isInSession(player)) {
-                npc.chat(busyWithPlayerMsg);
+                npc.chat(player, busyWithPlayerMsg);
                 return;
             }
 
@@ -147,6 +150,7 @@ public class Blacksmith extends Character {
         key.setString("messages.fail-reforge", failMsg);
         key.setString("messages.insufficient-funds", insufficientFundsMsg);
         key.setString("messages.cooldown-not-expired", cooldownUnexpiredMsg);
+        key.setString("messages.item-changed-during-reforge", itemChangedMsg);
         key.setInt("delays-in-seconds.minimum", minReforgeDelay);
         key.setInt("delays-in-seconds.maximum", maxReforgeDelay);
         key.setInt("delays-in-seconds.reforge-cooldown", reforgeCooldown);
@@ -155,31 +159,24 @@ public class Blacksmith extends Character {
         key.setBoolean("drop-item", dropItem);
     }
 
-    public String getInsufficientFundsMessage() {
-        return insufficientFundsMsg;
-    }
-
     private void reforge(NPC npc, Player player) {
         npc.chat(player, startReforgeMsg);
         plugin.withdraw(player);
-        session.setTask(plugin
-                .getServer()
-                .getScheduler()
-                .scheduleAsyncDelayedTask(plugin, new ReforgeTask(npc, player),
-                        (new Random().nextInt(maxReforgeDelay) + minReforgeDelay) * 20));
+        session.beginReforge();
         if (npc.getBukkitEntity() instanceof Player)
             ((Player) npc.getBukkitEntity()).setItemInHand(player.getItemInHand());
         player.setItemInHand(null);
     }
 
-    private class ReforgeTask implements Runnable {
-        private final NPC npc;
+    private class ReforgeSession implements Runnable {
         private final Player player;
+        private final NPC npc;
         private final ItemStack reforge;
+        private int taskId;
 
-        private ReforgeTask(NPC npc, Player player) {
-            this.npc = npc;
+        private ReforgeSession(Player player, NPC npc) {
             this.player = player;
+            this.npc = npc;
             reforge = player.getItemInHand();
         }
 
@@ -239,6 +236,36 @@ public class Blacksmith extends Character {
                     reforge.addEnchantment(enchantment, random.nextInt(enchantment.getMaxLevel()) + 1);
             }
             return true;
+        }
+
+        // Return if the session should end
+        private boolean handleClick() {
+            // Prevent player from switching items during session
+            if (!reforge.equals(player.getItemInHand())) {
+                npc.chat(player, itemChangedMsg);
+                return true;
+            }
+            if (!plugin.doesPlayerHaveEnough(player)) {
+                npc.chat(player, insufficientFundsMsg);
+                return true;
+            }
+            return false;
+        }
+
+        private boolean isRunning() {
+            return plugin.getServer().getScheduler().isQueued(taskId);
+        }
+
+        private boolean isInSession(Player other) {
+            return player.getName().equals(other.getName());
+        }
+
+        private void beginReforge() {
+            taskId = plugin
+                    .getServer()
+                    .getScheduler()
+                    .scheduleAsyncDelayedTask(plugin, this,
+                            (new Random().nextInt(maxReforgeDelay) + minReforgeDelay) * 20);
         }
     }
 }
