@@ -1,0 +1,58 @@
+!SESSION 2012-06-01 20:37:35.859 -----------------------------------------------
+eclipse.buildId=I20120518-2145
+java.version=1.6.0_31
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86 -data C:\Documents and Settings\Charles\.ssh\Blacksmith
+
+!ENTRY org.eclipse.help.base 4 0 2012-06-01 20:39:24.500
+!MESSAGE An error occured while pre-processing help XHTML document "/org.eclipse.platform.doc.user/whatsNew/platform_whatsnew.html" for search indexing
+!STACK 0
+org.xml.sax.SAXParseException: Attribute name "allowfullscreen" associated with an element type "iframe" must be followed by the ' = ' character.
+	at com.sun.org.apache.xerces.internal.parsers.DOMParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderImpl.parse(Unknown Source)
+	at org.eclipse.help.internal.dynamic.DocumentReader.read(DocumentReader.java:56)
+	at org.eclipse.help.internal.dynamic.XMLProcessor.process(XMLProcessor.java:49)
+	at org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor.process(DynamicXHTMLProcessor.java:76)
+	at org.eclipse.help.internal.search.XHTMLSearchParticipant.preprocess(XHTMLSearchParticipant.java:106)
+	at org.eclipse.help.search.SearchParticipantXML.addDocument(SearchParticipantXML.java:296)
+	at org.eclipse.help.internal.search.HTMLSearchParticipant.addDocument(HTMLSearchParticipant.java:51)
+	at org.eclipse.help.internal.search.SearchIndex.addDocument(SearchIndex.java:231)
+	at org.eclipse.help.internal.search.IndexingOperation.addDocuments(IndexingOperation.java:252)
+	at org.eclipse.help.internal.search.IndexingOperation.addNewDocuments(IndexingOperation.java:159)
+	at org.eclipse.help.internal.search.IndexingOperation.execute(IndexingOperation.java:106)
+	at org.eclipse.help.internal.search.LocalSearchManager.updateIndex(LocalSearchManager.java:671)
+	at org.eclipse.help.internal.search.LocalSearchManager.ensureIndexUpdated(LocalSearchManager.java:645)
+	at org.eclipse.help.internal.search.federated.IndexerJob.run(IndexerJob.java:31)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY org.eclipse.help.base 4 4 2012-06-01 20:39:24.593
+!MESSAGE Help documentation could not be indexed completely.
+!SUBENTRY 1 org.eclipse.help.base 4 4 2012-06-01 20:39:24.593
+!MESSAGE Exception occurred while adding document /org.eclipse.platform.doc.user/whatsNew/platform_whatsnew.html to index.
+!STACK 0
+org.xml.sax.SAXParseException: Premature end of file.
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.fatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLScanner.reportFatalError(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl$PrologDriver.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(Unknown Source)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(Unknown Source)
+	at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at javax.xml.parsers.SAXParser.parse(Unknown Source)
+	at javax.xml.parsers.SAXParser.parse(Unknown Source)
+	at org.eclipse.help.search.SearchParticipantXML.addDocument(SearchParticipantXML.java:297)
+	at org.eclipse.help.internal.search.HTMLSearchParticipant.addDocument(HTMLSearchParticipant.java:51)
+	at org.eclipse.help.internal.search.SearchIndex.addDocument(SearchIndex.java:231)
+	at org.eclipse.help.internal.search.IndexingOperation.addDocuments(IndexingOperation.java:252)
+	at org.eclipse.help.internal.search.IndexingOperation.addNewDocuments(IndexingOperation.java:159)
+	at org.eclipse.help.internal.search.IndexingOperation.execute(IndexingOperation.java:106)
+	at org.eclipse.help.internal.search.LocalSearchManager.updateIndex(LocalSearchManager.java:671)
+	at org.eclipse.help.internal.search.LocalSearchManager.ensureIndexUpdated(LocalSearchManager.java:645)
+	at org.eclipse.help.internal.search.federated.IndexerJob.run(IndexerJob.java:31)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
